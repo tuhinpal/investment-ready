@@ -42,7 +42,7 @@ async function doMessageStuff() {
           `${makeMessageStr(data[0])}\n` +
           `<b>Last Two years:</b>\n` +
           `${messageStr}` +
-          `\n\nUpdated at: ${new Date().toLocaleString()}`,
+          `\n\nUpdated at: ${new Date().toUTCString()}`,
         { parse_mode: "HTML" }
       );
     }
