@@ -1,63 +1,35 @@
-const app = require("express")();
 const getData = require("./helper/getData");
 const { Telegraf } = require("telegraf");
 const makeMessageStr = require("./helper/makeMessageStr");
-const bot = new Telegraf("2142929512:AAGA2jviFY17aUJTuZY_tq5yxVypimDXcZA");
-const cron = require("node-cron");
+const getConfigs = require("./helper/getConfigs");
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
-app.get("/", async (req, res) => {
-  var data = await getData();
-
-  if (data.length > 0) {
-    res.status(200).json({
-      message: "Fetched successfully",
-      lastAvailableData: data[0],
-      previousTwoYearData: data.slice(1, 25),
-    });
-  } else {
-    res.status(500).json({
-      message: "Internal server error",
-    });
-  }
-});
-
-async function doMessageStuff() {
+async function main() {
   try {
+    let config = getConfigs();
+
     var data = await getData();
-    var lastTwoYearData = data.slice(1, 25);
-    var messageStr = ``;
-    lastTwoYearData.forEach((d) => {
-      messageStr += makeMessageStr(d);
-    });
 
     if (data.length > 0) {
-      bot.telegram.editMessageText(
-        "-1001692621361",
-        4,
+      await bot.telegram.editMessageText(
+        config.CHANNEL_ID,
+        config.MESSAGE_ID,
         undefined,
-        `<b>👋 Hello,</b> Welcome to <i>Investment Ready</i>\n\n` +
-          `<b>This Month (<i>${
-            data[0].buffett.canInvest ? "Can Invest" : "Don't Invest"
-          }</i>):</b>\n` +
-          `${makeMessageStr(data[0])}\n` +
-          `<b>Last Two years:</b>\n` +
-          `${messageStr}` +
-          `\n\nUpdated at: ${new Date().toUTCString()}`,
+        makeMessageStr(data),
         { parse_mode: "HTML" }
       );
+      console.log("Yee! Done 🎉");
+    } else {
+      throw new Error("No data");
     }
   } catch (error) {
-    console.log(error.message);
+    console.log(error?.message);
+  } finally {
+    console.log("Exiting...");
+    setTimeout(() => {
+      process.exit(0);
+    }, 1000);
   }
 }
 
-cron.schedule("0 */6 * * *", async () => {
-  doMessageStuff();
-});
-
-doMessageStuff();
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+main();

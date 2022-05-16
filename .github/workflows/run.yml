@@ -1,0 +1,26 @@
+name: Update about investment
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "0 10 * * 1"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      MESSAGE_ID: ${{ secrets.MESSAGE_ID }}
+      CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+      - run: npm install
+      - run: node index.js

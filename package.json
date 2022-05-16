@@ -10,8 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.24.0",
-    "express": "^4.17.1",
-    "node-cron": "^3.0.0",
+    "dotenv": "^16.0.1",
     "telegraf": "^4.4.2"
   }
 }
