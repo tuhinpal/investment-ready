@@ -26,3 +26,4 @@ jobs:
         uses: actions/setup-node@v2
       - run: npm install
       - run: node index.js
+
