@@ -28,3 +28,7 @@ Investment is subjected to market risk. This is project calculates [Buffett Rati
 
 ## Bye 👋
 
+
+
+
+
